@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Site Blocker",
+  "name": "ANTI-CHUD",
   "version": "1.0",
-  "description": "Block distracting websites like YouTube.",
+  "description": "for straight CHUDS who want to minimize dopamine",
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
@@ -15,7 +15,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Site Blocker"
+    "default_title": "ANTI-CHUD"
   },
   "declarative_net_request": {
     "rule_resources": [
