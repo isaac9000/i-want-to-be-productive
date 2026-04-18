@@ -12,18 +12,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
 
   let hostname;
   try {
-    // FIX 1: Parse the URL so we only check the actual domain
     hostname = new URL(url).hostname;
   } catch (err) {
-    // If the URL is an internal Chrome page (or invalid), ignore it.
     return;
   }
 
   const { blocklist = [] } = await chrome.storage.local.get("blocklist");
 
-  // FIX 2: Check the hostname, NOT the raw URL string.
-  // This prevents safe sites (like Google or Reddit) from being ignored
-  // just because their query parameters happen to contain a blocked domain.
   const wouldBeBlocked = blocklist.some((domain) => hostname.includes(domain));
   if (wouldBeBlocked) return;
 
@@ -38,7 +33,15 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 
 // Rebuild all dynamic rules from stored blocklist
 async function updateRules() {
-  const { blocklist = [] } = await chrome.storage.local.get("blocklist");
+  const {
+    blocklist = [],
+    redirectEnabled = false,
+    redirectUrl = "",
+  } = await chrome.storage.local.get(["blocklist", "redirectEnabled", "redirectUrl"]);
+
+  // Decide where blocked sites should land
+  const useCustomRedirect = redirectEnabled && redirectUrl && isValidHttpUrl(redirectUrl);
+  const destination = useCustomRedirect ? redirectUrl : BLOCKED_PAGE;
 
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   const removeIds = existing.map((r) => r.id);
@@ -48,7 +51,7 @@ async function updateRules() {
     priority: 1,
     action: {
       type: "redirect",
-      redirect: { url: BLOCKED_PAGE },
+      redirect: { url: destination },
     },
     condition: {
       urlFilter: `||${domain}^`,
@@ -62,6 +65,15 @@ async function updateRules() {
   });
 }
 
+function isValidHttpUrl(str) {
+  try {
+    const u = new URL(str);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "UPDATE_RULES") {
     updateRules().then(() => sendResponse({ ok: true }));
@@ -69,8 +81,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.type === "GO_BACK") {
-    // FIX 3: Wrapped in a robust try/catch to ensure unhandled
-    // promise rejections don't silently kill the message channel.
     (async () => {
       try {
         const tabId = sender.tab?.id;
