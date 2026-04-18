@@ -34,4 +34,4 @@ ANTI-CHUD is a Chrome extension that blocks distracting websites and redirects y
 **When you hit a blocked page:**
 - You'll see the ANTI-CHUD shame screen. Sit and think about your life. 
 - Click **Go Back** to return to the last safe page you were on
-- Or open the popup and remove the domain from the blocklist if you actually need it
+- Stop CHUDMAXXING
