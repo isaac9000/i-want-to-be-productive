@@ -8,6 +8,32 @@ const redirectToggle = document.getElementById("redirectToggle");
 const redirectUrlInput = document.getElementById("redirectUrl");
 const redirectStatus = document.getElementById("redirectStatus");
 
+// ── Modal ─────────────────────────────────────────────────────────────────────
+
+const confirmOverlay = document.getElementById("confirmOverlay");
+const confirmDomain  = document.getElementById("confirmDomain");
+const confirmYes     = document.getElementById("confirmYes");
+const confirmNo      = document.getElementById("confirmNo");
+
+let pendingConfirm = null; // resolve fn set when modal opens
+
+function openConfirm(domain) {
+  confirmDomain.textContent = domain;
+  confirmOverlay.classList.add("open");
+  return new Promise((resolve) => { pendingConfirm = resolve; });
+}
+
+function closeConfirm(result) {
+  confirmOverlay.classList.remove("open");
+  if (pendingConfirm) { pendingConfirm(result); pendingConfirm = null; }
+}
+
+confirmYes.addEventListener("click", () => closeConfirm(true));
+confirmNo.addEventListener("click",  () => closeConfirm(false));
+confirmOverlay.addEventListener("click", (e) => {
+  if (e.target === confirmOverlay) closeConfirm(false);
+});
+
 // ── Storage helpers ──────────────────────────────────────────────────────────
 
 async function getBlocklist() {
@@ -73,7 +99,10 @@ function render(blocklist, meta) {
       </div>
       <button class="remove" title="Unblock">✕</button>
     `;
+
     li.querySelector(".remove").addEventListener("click", async () => {
+      const confirmed = await openConfirm(domain);
+      if (!confirmed) return;
       const [bl, m] = [await getBlocklist(), await getMeta()];
       const updated = bl.filter((d) => d !== domain);
       const updatedMeta = { ...m };
@@ -81,6 +110,7 @@ function render(blocklist, meta) {
       await saveBlocklist(updated, updatedMeta);
       render(updated, updatedMeta);
     });
+
     list.appendChild(li);
   });
 }

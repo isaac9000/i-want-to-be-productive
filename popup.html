@@ -62,14 +62,9 @@
       flex: 1;
       min-width: 0;
     }
-    .domain {
-      word-break: break-all;
-      color: #f1f1f1;
-    }
-    .days-badge {
-      font-size: 11px;
-      color: #888;
-    }
+    .domain { word-break: break-all; color: #f1f1f1; }
+    .days-badge { font-size: 11px; color: #888; }
+
     li .remove {
       background: none;
       color: #555;
@@ -79,6 +74,7 @@
       flex-shrink: 0;
     }
     li .remove:hover { color: #e55; background: none; }
+
     .empty { font-size: 12px; color: #555; text-align: center; padding: 12px 0; }
 
     /* Divider */
@@ -132,6 +128,59 @@
     }
     .toggle input:checked + .slider { background: #2a2a2a; }
     .toggle input:checked + .slider::before { transform: translateX(16px); background: #e55; }
+
+    /* Confirm modal overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 20px 18px;
+      width: 240px;
+      text-align: center;
+    }
+    .modal-box .modal-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .modal-box .modal-domain {
+      font-size: 12px;
+      color: #e55;
+      word-break: break-all;
+      background: #0f0f0f;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 5px 10px;
+      margin-bottom: 16px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 8px;
+      font-size: 13px;
+      border-radius: 6px;
+    }
+    .modal-cancel {
+      background: #2a2a2a !important;
+      color: #aaa !important;
+    }
+    .modal-cancel:hover { background: #333 !important; }
+    .modal-confirm { background: #e55 !important; }
+    .modal-confirm:hover { background: #c33 !important; }
   </style>
 </head>
 <body>
@@ -158,6 +207,18 @@
   </div>
   <div class="input-row">
     <input type="text" id="redirectUrl" placeholder="https://example.com" disabled />
+  </div>
+
+  <!-- Confirmation modal -->
+  <div class="modal-overlay" id="confirmOverlay">
+    <div class="modal-box">
+      <div class="modal-title">Gave up LOL?</div>
+      <div class="modal-domain" id="confirmDomain"></div>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="confirmNo">Nah I'd Win</button>
+        <button class="modal-confirm" id="confirmYes">I am a FAT CHUD</button>
+      </div>
+    </div>
   </div>
 
   <script src="popup.js"></script>

@@ -18,6 +18,7 @@
     .card {
       max-width: 420px;
       padding: 40px 32px;
+      width: 100%;
     }
     .icon { font-size: 64px; margin-bottom: 20px; }
     h1 { font-size: 28px; margin-bottom: 10px; }
@@ -32,6 +33,40 @@
       color: #e55;
       margin-bottom: 28px;
       word-break: break-all;
+    }
+    .redirect-wrap {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .redirect-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .redirect-label span {
+      font-size: 12px;
+      color: #666;
+    }
+    .redirect-label .redirect-timer {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e55;
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-track {
+      width: 100%;
+      background: #1a1a1a;
+      border-radius: 4px;
+      overflow: hidden;
+      height: 4px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 100%;
+      background: #e55;
+      border-radius: 4px;
+      transition: width 2s linear;
     }
     button {
       padding: 10px 24px;
@@ -52,6 +87,15 @@
     <h1>ANTI-CHUD</h1>
     <p>You are a CHUD!! You can unblock it from the extension popup.</p>
     <div id="url" class="site" style="display:none"></div>
+    <div class="redirect-wrap" id="redirectWrap">
+      <div class="redirect-label">
+        <span>Redirecting…</span>
+        <span class="redirect-timer" id="redirectTimer">2s</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
     <button id="backBtn">Go Back</button>
   </div>
   <script src="blocked.js"></script>

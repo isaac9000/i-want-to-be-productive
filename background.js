@@ -39,12 +39,16 @@ async function updateRules() {
     redirectUrl = "",
   } = await chrome.storage.local.get(["blocklist", "redirectEnabled", "redirectUrl"]);
 
-  // Decide where blocked sites should land
-  const useCustomRedirect = redirectEnabled && redirectUrl && isValidHttpUrl(redirectUrl);
-  const destination = useCustomRedirect ? redirectUrl : BLOCKED_PAGE;
-
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   const removeIds = existing.map((r) => r.id);
+
+  // Always land on the shame page first.
+  // If a custom redirect is configured, pass it as ?dest= so blocked.html
+  // can automatically forward there after the 2-second shame delay.
+  const useCustomRedirect = redirectEnabled && redirectUrl && isValidHttpUrl(redirectUrl);
+  const destination = useCustomRedirect
+    ? `${BLOCKED_PAGE}?dest=${encodeURIComponent(redirectUrl)}`
+    : BLOCKED_PAGE;
 
   const addRules = blocklist.map((domain, i) => ({
     id: i + 1,
