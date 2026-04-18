@@ -50,25 +50,10 @@
   <div class="card">
     <div class="icon">🗣️</div>
     <h1>ANTI-CHUD</h1>
-    <p>You are a CHUD. You can unblock it from the extension popup.</p>
-    <button onclick="history.back()">Go Back</button>
+    <p>You are a CHUD!! You can unblock it from the extension popup.</p>
+    <div id="url" class="site" style="display:none"></div>
+    <button id="backBtn">Go Back</button>
   </div>
-  <script>
-  const urlEl = document.getElementById("url");
-  const ref = document.referrer;
-  if (ref) {
-    urlEl.textContent = ref;
-  } else {
-    urlEl.style.display = "none";
-  }
-
-  function goBack() {
-    if (history.length > 1) {
-      history.back();
-    } else {
-      window.close();
-    }
-  }
-  </script>
+  <script src="blocked.js"></script>
 </body>
 </html>
